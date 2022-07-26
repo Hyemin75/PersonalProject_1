@@ -7,12 +7,14 @@ public class PlayerController : MonoBehaviour
     public AudioClip death;
     public AudioClip climbClip;
     public int stairIndex, money;
+    public StairMove stairMove;
 
     private bool isGrounded = true;
     private bool isLeft = true;
     private bool isRight = false;
     private bool isDead = false;
     private Stairs[] _stairs;
+    
     //움직임 xy축
 
     private Animator animator;
@@ -34,12 +36,13 @@ public class PlayerController : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Z))
             {
+                stairMove.StairMoveDown();
                 audioSource.Play();
                 animator.SetTrigger("Move");
             }
         }
     }
-    
+
     private void OnTriggerExit2D(Collider2D collision)
     {
         Die();

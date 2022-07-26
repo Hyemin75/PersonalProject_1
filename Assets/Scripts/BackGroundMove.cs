@@ -3,7 +3,6 @@
 // 게임 오브젝트를 키입력마다 움직이는 스크립트
 public class BackGroundMove : MonoBehaviour
 {
-    public BackGroundMove backGround;
     public float movementDegree = 0.01f;
 
     private int direction = -1; // x축 왼쪽/오른쪽 평행이동 방향 결정

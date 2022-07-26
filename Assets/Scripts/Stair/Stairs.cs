@@ -75,6 +75,12 @@ public class Stairs : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        StairMovement();
+    }
+
+
     private void SpawnStair(int stairNum)
     {
 
@@ -82,9 +88,27 @@ public class Stairs : MonoBehaviour
 
     private void StairMovement()
     {
-        if(stairs.Length != 0)
-        {
-
-        }
+        //Vector2 Downright = new Vector2(0.73f, -0.4f);
+        //Vector2 DownLeft = new Vector2(-0.73f, -0.4f);
+        //
+        //if (Input.GetKeyDown(KeyCode.Z))
+        //{
+        //    if (state == State.spawnLeft)
+        //    {
+        //        for (int i = 0; i < stairs.Length; ++i)
+        //        {
+        //            stairs[i].transform.position = formerPos + Downright;
+        //        }
+        //    }
+        //    else if (state == State.spawnRight)
+        //    {
+        //        for (int k = 0; k < stairs.Length; ++k)
+        //        {
+        //            stairs[k].transform.position = formerPos + DownLeft;
+        //        }
+        //    }
+        //
+        //    
+        //}
     }
 }
