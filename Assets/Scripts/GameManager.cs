@@ -1,72 +1,74 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
-public class GameManager : MonoBehaviour
+//게임 오버 상태 표현, 게임 점수와 ui를 관리하는 게임 매니저
+// 씬에는 단 하나의 게임 매니저만 존재
+
+public class GameManager : SingletonBehaviour<GameManager>
 {
-    Vector2 formerPos = new Vector2(-0.7f, -2.84f);
-    Vector2 leftPos = new Vector2(-0.73f, 0.4f), 
-            rightPos = new Vector2(0.73f, 0.4f);
 
-    public GameObject[] stairs;
+    public GameObject gameOverUI;
+    public bool isGameOver = false;
 
-    enum State {start, spawnLeft, spawnRight, leftDir, rightDir };
-    State state = State.start;
+    public UnityEvent<int> OnCoinChanged = new UnityEvent<int>();
+    public UnityEvent OnGameOver = new UnityEvent();
 
-    private int direction = 0;
+    private int CoinIncreaseAmount = 10;
 
-    private void Awake()
+    //현재 가지고 있는 코인 
+    public int CurrentCoin
     {
-        SpawnStair();
-    }
-
-    private void SpawnStair()
-    {
-        for (int i = 0; i < stairs.Length; i++)
+        get
         {
-            switch (state)
-            {
-                case State.start:
-                    stairs[i].transform.position = formerPos;
-                    state = State.spawnLeft;
-                    break;
-                case State.spawnLeft:
-                    stairs[i].transform.position = formerPos + leftPos;
-                    break;
-                case State.spawnRight:
-                    stairs[i].transform.position = formerPos + rightPos;
-                    break;
-                case State.rightDir:
-                    stairs[i].transform.position = formerPos + rightPos;
-                    state = State.spawnRight;
-                    break;
-                case State.leftDir:
-                    stairs[i].transform.position = formerPos + leftPos;
-                    state = State.spawnLeft;
-                    break;
-            }
-            
-            formerPos = stairs[i].transform.position;
-            
-            if(i != 0)
-            {
-                direction = Random.Range(0,9);
-                
-                if(direction <= 2)
-                {
-                    if (state == State.spawnLeft)
-                    {
-                        state = State.rightDir;
-                    }
-                }
-                else if(direction >= 7)
-                {
-                    if (state == State.spawnRight)
-                    {
-                        state = State.leftDir;
-                    }
-                }
-            }
+            return currentCoin;
+        }
+        set
+        {
+            currentCoin = value;
+            OnCoinChanged.Invoke(currentCoin);
         }
     }
+
+    private int currentCoin = 0; // 게임 점수
+    private bool isEnd = false;
+
+    private void Update()
+    {
+        if(isEnd && Input.GetKeyDown(KeyCode.R)) // 다시 시작 나중에 버튼으로 수정 예정
+        {
+            reset();
+            SceneManager.LoadScene(0);
+        }
+    }
+
+    public void AddScore()
+    {
+        CurrentCoin += CoinIncreaseAmount;
+    }
+
+    // 플레이어 캐릭터가 사망시 게임 오버를 실행하는 메서드
+    public void End()
+    {
+        GameObject gameOverUI = GameObject.Find("GameOverUI"); // find 함수는 active 함수만 찾음
+        isEnd = true;
+        OnGameOver.Invoke();
+    }
+
+    private void reset()
+    {
+        currentCoin = 0;
+        isEnd = false;
+    }
+
+
+
+
+
+
 }
+
+
+
+
