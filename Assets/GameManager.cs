@@ -12,9 +12,10 @@ public class GameManager : MonoBehaviour
     private int score;
     public GameObject Button;
     private bool isOver;
-    public GameObject player;
-    public BackGround background;
-    public float moveDgree = 0.005f;
+    public Player player;
+    public GameObject background;
+    public float moveDgree = 0.01f;
+
     void Start()
     {
         Restart();
@@ -22,12 +23,14 @@ public class GameManager : MonoBehaviour
 
     public void Restart()
     {
+
         isOver = false;
         Button.SetActive(false);
         currentStair = 1;
         score = 0;
         scoreText.text = "0";
-        stairs[0].position = new Vector2(0, -0.25f);
+        stairs[0].position = new Vector2(0, -2f);
+        
         for (int i = 1; i < stairs.Length; i++)
         {
             isStairRight[i] = Random.Range(0, 2) == 0;
@@ -40,45 +43,57 @@ public class GameManager : MonoBehaviour
                 stairs[i].position = new Vector2(stairs[i - 1].position.x - 0.75f, stairs[i - 1].position.y + 0.4f);
             }
         }
+        player.Resetting();
+
     }
 
     void Update()
     {
         if (isOver)
         {
-            return; 
+            player.Die();
+            return;
         }
 
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
-            MoveBackground();
+     
+            player.TurnRight();
+            player.Climb();
+            Vector3 newPosition = background.transform.position - new Vector3(0, moveDgree);
+            background.transform.position = newPosition;
             if (isStairRight[currentStair])
             {
-                NextStair();
-                score++;
-                scoreText.text = "" + score;            
-            }
-            else
-            {
-                isOver = true;
-                Button.SetActive(true);
-            }
-        }
-        else if (Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            MoveBackground();
-            if (!isStairRight[currentStair])
-            {
-                
                 NextStair();
                 score++;
                 scoreText.text = "" + score;
             }
             else
             {
-               
                 isOver = true;
                 Button.SetActive(true);
+                player.Die();
+            }
+        }
+        else if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            player.TurnLeft();
+            player.Climb();
+            Vector3 newPosition = background.transform.position - new Vector3(0, moveDgree);
+            background.transform.position = newPosition;
+
+            if (!isStairRight[currentStair])
+            {
+
+                NextStair();
+                score++;
+                scoreText.text = "" + score;
+            }
+            else
+            {
+                isOver = true;
+                Button.SetActive(true);
+                player.Die();
             }
         }
     }
@@ -130,9 +145,4 @@ public class GameManager : MonoBehaviour
     }
 
 
-    void MoveBackground()
-    {
-        background.transform.Translate(0f, moveDgree, 0f);
-        moveDgree -= moveDgree;
-    }
 }
